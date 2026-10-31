@@ -14,7 +14,14 @@ const https = require('https');
 const http = require('http');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+
+// Acepta ambas estructuras:
+// 1) proyecto/public/index.html (recomendado)
+// 2) proyecto/index.html (HTML junto a server.js)
+const fs = require('fs');
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const WEB_ROOT = fs.existsSync(path.join(PUBLIC_DIR, 'index.html')) ? PUBLIC_DIR : __dirname;
 
 // ============================================================================
 // SECCIÓN 1: CONFIGURACIÓN DE MIDDLEWARES Y SEGURIDAD BÁSICA
@@ -22,6 +29,14 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ success: false, message: 'El cuerpo JSON enviado no es válido.' });
+  }
+  console.error('[Middleware Error]:', err);
+  return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+});
 
 // Middleware de cabeceras CORS permisivas para evitar bloqueos de red en Render
 app.use((req, res, next) => {
@@ -41,8 +56,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configuración de la carpeta estática para servir index.html, code.html y home.html
-app.use(express.static(path.join(__dirname, 'public')));
+// Servir únicamente recursos web. No exponer server.js, package.json ni archivos de datos.
+app.use((req, res, next) => {
+  const pathname = decodeURIComponent((req.path || '/').toLowerCase());
+  if (/(^|\/)(server|package|database|\.env)(\.|\/|$)/i.test(pathname)) {
+    return res.sendStatus(404);
+  }
+  next();
+});
+app.use(express.static(WEB_ROOT, {
+  index: false,
+  dotfiles: 'ignore',
+  extensions: ['html']
+}));
 
 // ============================================================================
 // SECCIÓN 2: BASE DE DATOS EN MEMORIA (ESTADO GLOBAL COMPLETO Y PERSISTENTE)
@@ -120,17 +146,10 @@ let db = {
 // SECCIÓN 3: WORKER ANTI-SLEEP (PING AUTOMÁTICO CADA 50 SEGUNDOS)
 // ============================================================================
 
-const RENDER_URL = 'https://la-web-inutil-servidor-supongo.onrender.com';
-
+// No se hace ping a un dominio fijo: el dominio anterior no corresponde necesariamente
+// a este servicio y podía generar errores de conexión engañosos en los logs.
 function startAntiSleepWorker() {
-  console.log('[Anti-Sleep Worker] Iniciando servicio de mantenimiento de actividad...');
-  setInterval(() => {
-    https.get(RENDER_URL, (res) => {
-      console.log(`[Anti-Sleep Ping] Estado HTTP recibido: ${res.statusCode} a las ${new Date().toLocaleTimeString()}`);
-    }).on('error', (err) => {
-      console.error('[Anti-Sleep Ping Warning] No se pudo completar el autoping:', err.message);
-    });
-  }, 50000);
+  console.log('[Render] Servicio iniciado. Health check disponible en /health.');
 }
 
 // ============================================================================
@@ -139,33 +158,33 @@ function startAntiSleepWorker() {
 
 // Ruta principal -> Pantalla de Login (index.html)
 app.get('/', (req, res) => {
-  const filePath = path.join(__dirname, 'public', 'index.html');
+  const filePath = path.join(WEB_ROOT, 'index.html');
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('[Error de Ruta] No se pudo servir index.html:', err.message);
-      res.status(500).send('Error crítico: Archivo index.html no encontrado en la carpeta public.');
+      res.status(500).send('Error crítico: No se encuentra index.html. Colócalo junto a server.js o dentro de /public.');
     }
   });
 });
 
 // Ruta de código de un solo uso -> code.html
 app.get('/code', (req, res) => {
-  const filePath = path.join(__dirname, 'public', 'code.html');
+  const filePath = path.join(WEB_ROOT, 'code.html');
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('[Error de Ruta] No se pudo servir code.html:', err.message);
-      res.status(500).send('Error crítico: Archivo code.html no encontrado en la carpeta public.');
+      res.status(500).send('Error crítico: No se encuentra code.html. Colócalo junto a server.js o dentro de /public.');
     }
   });
 });
 
 // Ruta principal privada -> home.html
 app.get('/home', (req, res) => {
-  const filePath = path.join(__dirname, 'public', 'home.html');
+  const filePath = path.join(WEB_ROOT, 'home.html');
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('[Error de Ruta] No se pudo servir home.html:', err.message);
-      res.status(500).send('Error crítico: Archivo home.html no encontrado en la carpeta public.');
+      res.status(500).send('Error crítico: No se encuentra home.html. Colócalo junto a server.js o dentro de /public.');
     }
   });
 });
