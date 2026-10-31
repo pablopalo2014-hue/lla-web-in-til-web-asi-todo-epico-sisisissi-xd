@@ -4,52 +4,71 @@
     <meta charset="UTF-8">
     <title>La Web Inútil - Login</title>
     <style>
-        body { background: #121212; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); width: 320px; text-align: center; border: 1px solid #333; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 6px; background: #2a2a2a; color: #fff; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #ffcc00; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .login-container { background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.7); width: 350px; text-align: center; border: 1px solid #333; }
+        h2 { color: #ffcc00; margin-bottom: 20px; font-size: 24px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; border: 1px solid #444; border-radius: 6px; background: #2a2a2a; color: #fff; font-size: 14px; transition: border 0.3s; }
+        input:focus { border-color: #ffcc00; outline: none; }
+        button { width: 100%; padding: 12px; background: #ffcc00; color: #121212; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: background 0.3s; }
         button:hover { background: #e6b800; }
-        .easter-egg { position: fixed; bottom: 15px; left: 15px; font-size: 13px; color: #555; cursor: pointer; user-select: none; }
+        .links { margin-top: 20px; font-size: 13px; }
+        .links a { color: #8ab4f8; text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
+        .easter-egg { position: fixed; bottom: 15px; left: 15px; font-size: 12px; color: #444; cursor: pointer; user-select: none; transition: color 0.3s; }
         .easter-egg:hover { color: #ffcc00; }
     </style>
 </head>
 <body>
-    <div class="login-card">
+    <div class="login-container">
         <h2>🔒 La Web Inútil</h2>
         <form id="loginForm">
-            <input type="text" id="username" placeholder="Nombre de usuario" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
+            <div class="input-group">
+                <label for="username">Nombre de usuario</label>
+                <input type="text" id="username" placeholder="Tu usuario del patio" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
             <button type="submit">Acceder</button>
         </form>
-        <p style="margin-top: 15px;">
-            <a href="/code" style="color: #aaa; font-size: 13px; text-decoration: none;">Entrar con código de un solo uso</a>
-        </p>
+        <div class="links">
+            <a href="/code">Entrar con código de un solo uso</a>
+        </div>
     </div>
-    <div class="easter-egg" onclick="getFreeCoins()">🎁 [Easter Egg]</div>
+
+    <div class="easter-egg" onclick="getFreeCoins()">🎁 [Easter Egg Inútil]</div>
+
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
             try {
                 const res = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
-                if (res.ok) {
-                    const data = await res.json();
+
+                const data = await res.json();
+                if (res.ok && data.success) {
                     localStorage.setItem('currentUser', JSON.stringify(data.user));
                     window.location.href = '/home';
                 } else {
                     window.location.href = '/401';
                 }
             } catch (err) {
-                alert('Error de conexión con el servidor.');
+                alert('Error crítico de conexión con el servidor.');
             }
         });
+
         function getFreeCoins() {
-            alert('¡Has encontrado el Easter Egg! Has ganado tus primeras Inútil Coins 🪙');
+            alert('¡Felicidades! Has descubierto el secreto público y ganado tus primeras Inútil Coins 🪙');
         }
     </script>
 </body>
