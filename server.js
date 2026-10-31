@@ -10,7 +10,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Base de datos completa en memoria
 let db = {
   users: [],
   singleUseCode: { code: "45567", used: false },
@@ -33,13 +32,13 @@ let db = {
 const RENDER_URL = 'https://la-web-inutil-servidor-supongo.onrender.com';
 setInterval(() => {
   https.get(RENDER_URL, (res) => {
-    console.log(`[Anti-Sleep] Ping enviado. Estado: ${res.statusCode}`);
+    console.log(`[Anti-Sleep] Ping estado: ${res.statusCode}`);
   }).on('error', (err) => {
     console.error('[Anti-Sleep] Error:', err.message);
   });
 }, 50000);
 
-// --- RUTAS DE LAS 3 PÁGINAS PRINCIPALES ---
+// Rutas Principales
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -62,7 +61,7 @@ app.get('/401', (req, res) => {
   `);
 });
 
-// --- API ENDPOINTS ---
+// API Endpoints
 app.get('/api/state', (req, res) => {
   res.json(db);
 });
@@ -102,7 +101,7 @@ app.post('/api/chat', (req, res) => {
   const { username, text } = req.body;
   const user = db.users.find(u => u.username === username);
   if (user && user.restrictions && user.restrictions.removeChat) {
-    return res.status(403).json({ success: false, message: 'Tienes el chat bloqueado por un administrador.' });
+    return res.status(403).json({ success: false, message: 'Chat bloqueado' });
   }
   const msg = { username, text, time: new Date().toLocaleTimeString() };
   db.chat.push(msg);
@@ -122,9 +121,8 @@ app.post('/api/banquero/money', (req, res) => {
 
 app.post('/api/admin/users', (req, res) => {
   const { username, password, restrictions, role } = req.body;
-  const existing = db.users.find(u => u.username === username);
-  if (existing) {
-    return res.status(400).json({ success: false, message: 'El usuario ya existe' });
+  if (db.users.find(u => u.username === username)) {
+    return res.status(400).json({ success: false, message: 'Ya existe' });
   }
   const newUser = {
     username,
@@ -135,7 +133,7 @@ app.post('/api/admin/users', (req, res) => {
     inventory: [],
     posts: [],
     comments: [],
-    restrictions: restrictions || { blockPosts: false, removeEmojis: false, removeShop: false, removeChat: false, removeJail: false }
+    restrictions: restrictions || {}
   };
   db.users.push(newUser);
   res.json({ success: true, user: newUser });
@@ -157,14 +155,12 @@ app.post('/api/market/item', (req, res) => {
 });
 
 app.post('/api/events', (req, res) => {
-  const event = req.body;
-  db.events.push(event);
+  db.events.push(req.body);
   res.json({ success: true, events: db.events });
 });
 
 app.post('/api/missions', (req, res) => {
-  const mission = req.body;
-  db.missions.push(mission);
+  db.missions.push(req.body);
   res.json({ success: true, missions: db.missions });
 });
 
@@ -173,7 +169,7 @@ app.post('/api/posts', (req, res) => {
   const user = db.users.find(u => u.username === username);
   if (!user) return res.status(404).json({ success: false });
   if (user.restrictions && user.restrictions.blockPosts) {
-    return res.status(403).json({ success: false, message: 'Tienes prohibido hacer publicaciones.' });
+    return res.status(403).json({ success: false });
   }
   user.posts.push({ content, time: new Date().toLocaleString() });
   res.json({ success: true, user });
@@ -181,5 +177,5 @@ app.post('/api/posts', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Servidor iniciado en puerto ${PORT}`);
+  console.log(`Servidor en puerto ${PORT}`);
 });
