@@ -4,51 +4,68 @@
     <meta charset="UTF-8">
     <title>La Web Inútil - Home</title>
     <style>
-        body { background: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #121212; color: #e0e0e0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: #1e1e1e; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .coins-badge { background: #2a2a2a; padding: 8px 15px; border-radius: 20px; font-weight: bold; color: #ffcc00; border: 1px solid #444; display: flex; align-items: center; gap: 5px; }
-        nav { background: #181818; display: flex; gap: 10px; padding: 10px 30px; border-bottom: 1px solid #333; flex-wrap: wrap; }
-        nav button { background: #2a2a2a; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        nav button:hover, nav button.active { background: #ffcc00; color: #000; }
-        .container { max-width: 900px; margin: 30px auto; padding: 20px; background: #1e1e1e; border-radius: 10px; border: 1px solid #333; }
+        .header-title { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; color: #ffcc00; }
+        .coins-badge { background: #2a2a2a; padding: 8px 16px; border-radius: 20px; font-weight: bold; color: #ffcc00; border: 1px solid #444; display: flex; align-items: center; gap: 6px; }
+        nav { background: #181818; display: flex; gap: 8px; padding: 12px 30px; border-bottom: 1px solid #333; flex-wrap: wrap; }
+        nav button { background: #2a2a2a; color: #ccc; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+        nav button:hover, nav button.active { background: #ffcc00; color: #121212; }
+        .main-container { flex: 1; max-width: 1000px; width: 100%; margin: 20px auto; padding: 20px; background: #1e1e1e; border-radius: 10px; border: 1px solid #333; overflow-y: auto; position: relative; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        input, textarea, select { width: 100%; padding: 10px; margin: 8px 0; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
-        button.action-btn { background: #ffcc00; color: #000; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        input, textarea, select { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 14px; }
+        button.action-btn { background: #ffcc00; color: #121212; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         button.action-btn:hover { background: #e6b800; }
-        .chat-box { height: 300px; background: #121212; border: 1px solid #333; border-radius: 5px; padding: 10px; overflow-y: scroll; margin-bottom: 10px; }
-        .jail-container { background: #151515; border: 2px dashed #ff4444; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; position: relative; }
-        .profile-key { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; background: #4CAF50; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .chat-box { height: 350px; background: #151515; border: 1px solid #333; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { background: #222; padding: 8px 12px; border-radius: 6px; font-size: 14px; border-left: 3px solid #ffcc00; }
+        .chat-msg b { color: #ffcc00; }
+        .emoji-bar { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+        .emoji-btn { background: #2a2a2a; color: #fff; border: 1px solid #444; padding: 6px 10px; cursor: pointer; border-radius: 4px; font-size: 14px; }
+        .emoji-btn:hover { background: #3a3a3a; }
+        .jail-box { background: #181515; border: 2px dashed #ff4444; padding: 20px; border-radius: 8px; text-align: center; margin-top: 25px; position: relative; }
+        .profile-key { position: absolute; top: 15px; right: 15px; width: 28px; height: 28px; background: #4CAF50; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+        .admin-badge { background: #ff4444; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; margin-left: 8px; display: inline-block; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
+        .market-card { background: #252525; border: 1px solid #383838; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
+        .market-card h4 { color: #ffcc00; margin-bottom: 5px; }
+        .market-card p { font-size: 13px; color: #bbb; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <header>
-        <h2>🏛️ La Web Inútil</h2>
+        <div class="header-title">
+            🏛️ La Web Inútil 
+            <span id="adminBadgeContainer"></span>
+        </div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <div class="coins-badge" id="coinsDisplay">🪙 0 Inútil Coins</div>
-            <button onclick="logout()" style="background:#ff4444; color:#fff; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">Salir</button>
+            <button onclick="logout()" style="background:#ff4444; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:bold;">Salir</button>
         </div>
     </header>
 
-    <nav>
+    <nav id="navbar">
         <button onclick="switchTab('chat')" class="active">💬 Chat</button>
         <button onclick="switchTab('market')">🛒 Mercado</button>
         <button onclick="switchTab('profiles')">👤 Perfiles</button>
         <button onclick="switchTab('inventory')">🎒 Inventario</button>
         <button onclick="switchTab('missions')">🎯 Misiones</button>
         <button onclick="switchTab('events')">🎉 Eventos</button>
+        <button onclick="switchTab('ideas')">💡 Buzón Ideas</button>
         <button id="nav-banquero" style="display:none;" onclick="switchTab('banquero')">💰 Banquero</button>
         <button id="nav-vendedor" style="display:none;" onclick="switchTab('vendedor')">📦 Vendedor</button>
         <button id="nav-admin" style="display:none;" onclick="switchTab('admin')">🛡️ Admin</button>
         <button id="nav-owner" style="display:none;" onclick="switchTab('owner')">👑 Owner</button>
     </nav>
 
-    <div class="container">
+    <div class="main-container">
         <!-- CHAT -->
         <div id="tab-chat" class="tab-content active">
-            <h3>Chat General</h3>
+            <h3>Chat Comunitario del Patio</h3>
+            <p style="font-size: 13px; color: #888; margin-bottom: 15px;">Espacio privado y seguro libre de baneos externos.</p>
             <div class="chat-box" id="chatMessages"></div>
-            <div style="margin-bottom: 10px;" id="emojiBar"></div>
+            <div class="emoji-bar" id="emojiBar"></div>
             <div style="display: flex; gap: 10px;">
                 <input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="margin:0;">
                 <button class="action-btn" onclick="sendChatMessage()">Enviar</button>
@@ -57,17 +74,16 @@
 
         <!-- MERCADO -->
         <div id="tab-market" class="tab-content">
-            <h3>Mercado & Tienda</h3>
-            <div id="marketContent"><p>Cargando tienda...</p></div>
+            <h3>Mercado & Tienda General</h3>
+            <div class="card-grid" id="marketContent"></div>
 
-            <!-- CÁRCEL DE MARIO -->
-            <div class="jail-container">
+            <div class="jail-container jail-box">
                 <h4>🔒 La Cárcel de Mario</h4>
-                <p>👀 [Unos ojos te miran desde la oscuridad y dicen: "¡Libérame por favor!"]</p>
-                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 15px;">
-                    <button onclick="tryUnlock(1)" id="lock1">🔒 Cerradura 1</button>
-                    <button onclick="tryUnlock(2)" id="lock2">🔒 Cerradura 2</button>
-                    <button onclick="tryUnlock(3)" id="lock3">🔒 Cerradura 3 (v2.0)</button>
+                <p style="margin: 8px 0; font-style: italic; color: #ff8888;">👀 [Unos ojos te observan desde la oscuridad y susurran: "¡Libérame por favor!"]</p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                    <button class="action-btn" onclick="tryUnlock(1)" id="lockBtn1">🔓 Cerradura 1</button>
+                    <button class="action-btn" onclick="tryUnlock(2)" id="lockBtn2">🔓 Cerradura 2</button>
+                    <button class="action-btn" onclick="tryUnlock(3)" id="lockBtn3" style="background:#555; color:#aaa;">🔓 Cerradura 3 (v2.0)</button>
                 </div>
             </div>
         </div>
@@ -75,78 +91,97 @@
         <!-- PERFILES -->
         <div id="tab-profiles" class="tab-content" style="position: relative;">
             <div class="profile-key" id="greenKey" title="Llave Oculta" onclick="collectKey2()">🔑</div>
-            <h3>Perfiles de Usuario</h3>
+            <h3>Perfiles de la Comunidad</h3>
+            <input type="text" id="profileSearch" placeholder="🔍 Buscar miembro por nombre..." oninput="filterProfiles()" style="margin-bottom: 15px;">
             <div id="profilesList"></div>
         </div>
 
         <!-- INVENTARIO -->
         <div id="tab-inventory" class="tab-content">
-            <h3>Tu Inventario</h3>
-            <div id="inventoryList"><p>Inventario vacío.</p></div>
+            <h3>Tu Inventario Personal</h3>
+            <div class="card-grid" id="inventoryList"></div>
         </div>
 
         <!-- MISIONES -->
         <div id="tab-missions" class="tab-content">
-            <h3>Misiones Semanales y de Evento</h3>
+            <h3>Misiones Activas</h3>
             <div id="missionsList"></div>
         </div>
 
         <!-- EVENTOS -->
         <div id="tab-events" class="tab-content">
-            <h3>Zona de Eventos</h3>
-            <div id="eventsContainer"><p>No hay nada por ahora.</p></div>
+            <h3>Eventos Especiales en el Patio</h3>
+            <div id="eventsContainer"><p style="color: #777;">No hay nada por ahora.</p></div>
         </div>
 
-        <!-- BANQUERO PANEL -->
+        <!-- BUZÓN DE IDEAS -->
+        <div id="tab-ideas" class="tab-content">
+            <h3>💡 Buzón de Sugerencias de Juegos</h3>
+            <textarea id="ideaInput" placeholder="Propón un nuevo juego o regla para el patio..."></textarea>
+            <button class="action-btn" onclick="submitIdea()">Enviar Idea</button>
+            <div id="ideasContainer" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- BANQUERO -->
         <div id="tab-banquero" class="tab-content">
-            <h3>💰 Panel del Banquero</h3>
-            <input type="text" id="bankUser" placeholder="Nombre de usuario">
+            <h3>💰 Panel de Gestión del Banquero</h3>
+            <input type="text" id="bankUser" placeholder="Nombre de usuario destinatario">
             <input type="number" id="bankAmount" placeholder="Cantidad (+/- Inútil Coins)">
-            <button class="action-btn" onclick="modifyMoney()">Actualizar Dinero</button>
+            <button class="action-btn" onclick="modifyMoney()">Modificar Saldo</button>
         </div>
 
-        <!-- VENDEDOR PANEL -->
+        <!-- VENDEDOR -->
         <div id="tab-vendedor" class="tab-content">
             <h3>📦 Panel del Vendedor</h3>
             <input type="text" id="itemTitle" placeholder="Nombre del ítem">
             <input type="text" id="itemDesc" placeholder="Descripción (ej: [item?_key1])">
-            <input type="number" id="itemPrice" placeholder="Precio (Inútil Coins)">
+            <input type="number" id="itemPrice" placeholder="Precio en Inútil Coins">
             <select id="itemType">
-                <option value="cosmeticos">Cosmético</option>
+                <option value="cosmeticos">Cosmético de Perfil</option>
                 <option value="roles">Rol del Bicho</option>
-                <option value="extras">Extra</option>
+                <option value="extras">Extra / Llave</option>
             </select>
-            <button class="action-btn" onclick="createMarketItem()">Subir a la Tienda</button>
+            <button class="action-btn" onclick="createMarketItem()">Publicar en el Mercado</button>
         </div>
 
-        <!-- ADMIN PANEL -->
+        <!-- ADMIN -->
         <div id="tab-admin" class="tab-content">
             <h3>🛡️ Panel de Administración</h3>
-            <input type="text" id="newAccUser" placeholder="Usuario">
-            <input type="password" id="newAccPass" placeholder="Contraseña">
-            <select id="newAccRole">
-                <option value="miembro">Miembro</option>
-                <option value="banquero">Banquero</option>
-                <option value="vendedor">Vendedor</option>
-                <option value="admin">Admin</option>
-            </select>
-            <button class="action-btn" onclick="createAccount()">Crear Cuenta</button>
+            <div style="background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4>Crear Nueva Cuenta</h4>
+                <input type="text" id="newAccUser" placeholder="Nombre de usuario">
+                <input type="password" id="newAccPass" placeholder="Contraseña">
+                <select id="newAccRole">
+                    <option value="miembro">Miembro</option>
+                    <option value="banquero">Banquero</option>
+                    <option value="vendedor">Vendedor</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button class="action-btn" onclick="createAccount()">Registrar Cuenta</button>
+            </div>
+            <div style="background: #252525; padding: 15px; border-radius: 8px;">
+                <h4>Subir Emoji Mensual</h4>
+                <input type="text" id="newEmojiTag" placeholder="Ej: :patio2:">
+                <button class="action-btn" onclick="uploadEmoji()">Añadir al Chat</button>
+            </div>
         </div>
 
-        <!-- OWNER PANEL -->
+        <!-- OWNER -->
         <div id="tab-owner" class="tab-content">
             <h3>👑 Panel de Owner</h3>
-            <p>Control total de la comunidad.</p>
+            <p>Control total absoluto de servidores y permisos especiales de la comunidad.</p>
         </div>
     </div>
 
     <script>
         let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (!currentUser) {
-            window.location.href = '/';
-        }
+        if (!currentUser) window.location.href = '/';
 
         document.getElementById('coinsDisplay').innerHTML = `🪙 ${currentUser.coins || 0} Inútil Coins`;
+
+        if (currentUser.role === 'owner' || currentUser.role === 'admin') {
+            document.getElementById('adminBadgeContainer').innerHTML = `<span class="admin-badge" onclick="alert('Administrador de la web')">A</span>`;
+        }
 
         if (currentUser.role === 'owner') {
             document.getElementById('nav-owner').style.display = 'block';
@@ -173,7 +208,7 @@
             document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             event.currentTarget.classList.add('active');
-            if (tabId === 'chat') loadState();
+            if (tabId === 'chat' || tabId === 'market' || tabId === 'profiles' || tabId === 'inventory') loadState();
         }
 
         async function loadState() {
@@ -182,21 +217,55 @@
             
             // Chat
             const chatBox = document.getElementById('chatMessages');
-            chatBox.innerHTML = db.chat.map(m => `<div><b>${m.username}</b> [${m.time}]: ${m.text}</div>`).join('') || '<p style="color:#777;">No hay mensajes todavía.</p>';
+            chatBox.innerHTML = db.chat.map(m => `<div class="chat-msg"><b>${m.username}</b> <span style="font-size:10px; color:#777;">[${m.time}]</span>: ${m.text}</div>`).join('') || '<p style="color:#777;">No hay mensajes todavía.</p>';
             chatBox.scrollTop = chatBox.scrollHeight;
 
             // Emojis
             const emojiBar = document.getElementById('emojiBar');
             const allEmojis = [...db.emojis, ...db.adminEmojis];
-            emojiBar.innerHTML = allEmojis.map(e => `<button type="button" onclick="insertEmoji('${e}')" style="background:#2a2a2a; color:#fff; border:1px solid #444; padding:5px 10px; margin:2px; cursor:pointer; border-radius:4px;">${e}</button>`).join('');
+            emojiBar.innerHTML = allEmojis.map(e => `<button class="emoji-btn" onclick="insertEmoji('${e}')">${e}</button>`).join('');
 
             // Market
             const marketDiv = document.getElementById('marketContent');
-            marketDiv.innerHTML = db.market.map(i => `<div style="background:#252525; padding:10px; margin:5px 0; border-radius:5px;"><b>${i.name}</b> (${i.type}) - ${i.price} 🪙<p>${i.desc}</p></div>`).join('') || '<p>Todavía no hay nada de nada.</p>';
+            marketDiv.innerHTML = db.market.map(i => `
+                <div class="market-card">
+                    <div>
+                        <h4>${i.name}</h4>
+                        <p>${i.desc}</p>
+                    </div>
+                    <div>
+                        <div style="font-weight:bold; color:#ffcc00; margin-bottom:8px;">${i.price} 🪙</div>
+                        <button class="action-btn" style="width:100%; padding:6px;" onclick="buyItem(${i.id})">Comprar</button>
+                    </div>
+                </div>
+            `).join('') || '<p>Todavía no hay nada de nada.</p>';
+
+            // Inventory
+            const invDiv = document.getElementById('inventoryList');
+            invDiv.innerHTML = currentUser.inventory?.map(i => `
+                <div class="market-card">
+                    <h4>${i.name}</h4>
+                    <p>${i.desc}</p>
+                    <span style="font-size:11px; color:#4CAF50;">Adquirido</span>
+                </div>
+            `).join('') || '<p style="color:#777;">Inventario vacío.</p>';
 
             // Missions
-            const missionsDiv = document.getElementById('missionsList');
-            missionsDiv.innerHTML = db.missions.map(m => `<div style="background:#252525; padding:10px; margin:5px 0; border-radius:5px;">🎯 ${m.text} (+${m.reward} 🪙)</div>`).join('');
+            document.getElementById('missionsList').innerHTML = db.missions.map(m => `
+                <div style="background:#252525; padding:12px; border-radius:6px; margin-bottom:8px; border-left:3px solid #4CAF50;">
+                    <b>🎯 ${m.text}</b> <span style="color:#ffcc00; float:right;">+${m.reward} 🪙</span>
+                </div>
+            `).join('');
+
+            // Events
+            if (db.events.length > 0) {
+                document.getElementById('eventsContainer').innerHTML = db.events.map(ev => `
+                    <div style="background:#252525; padding:15px; border-radius:8px; border-left:3px solid #ffcc00;">
+                        <h4>${ev.name}</h4>
+                        <p>${ev.desc}</p>
+                    </div>
+                `).join('');
+            }
         }
 
         function insertEmoji(emoji) {
@@ -204,8 +273,8 @@
         }
 
         async function sendChatMessage() {
-            const text = document.getElementById('chatInput').value;
-            if (!text.trim()) return;
+            const text = document.getElementById('chatInput').value.trim();
+            if (!text) return;
             const res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -220,77 +289,128 @@
             }
         }
 
-        loadState();
+        async function buyItem(itemId) {
+            const res = await fetch('/api/market/buy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser.username, itemId })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                currentUser = data.user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                document.getElementById('coinsDisplay').innerHTML = `🪙 ${currentUser.coins} Inútil Coins`;
+                alert('¡Compra realizada con éxito!');
+                loadState();
+            } else {
+                alert(data.message || 'Error en la compra');
+            }
+        }
 
         async function modifyMoney() {
-            const username = document.getElementById('bankUser').value;
+            const username = document.getElementById('bankUser').value.trim();
             const amount = document.getElementById('bankAmount').value;
             const res = await fetch('/api/banquero/money', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, amount })
+                body: JSON.stringify({ username, amount, operatorUsername: currentUser.username })
             });
             if (res.ok) {
-                alert('Dinero actualizado');
+                alert('Saldo actualizado correctamente.');
                 document.getElementById('bankUser').value = '';
                 document.getElementById('bankAmount').value = '';
             } else {
-                alert('Usuario no encontrado');
+                alert('Error al actualizar saldo.');
             }
         }
 
         async function createMarketItem() {
-            const name = document.getElementById('itemTitle').value;
-            const desc = document.getElementById('itemDesc').value;
+            const name = document.getElementById('itemTitle').value.trim();
+            const desc = document.getElementById('itemDesc').value.trim();
             const price = document.getElementById('itemPrice').value;
             const type = document.getElementById('itemType').value;
             const res = await fetch('/api/market/item', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, desc, price: Number(price), type })
+                body: JSON.stringify({ name, desc, price, type, operatorUsername: currentUser.username })
             });
             if (res.ok) {
-                alert('Ítem subido');
+                alert('Ítem publicado en el mercado.');
                 loadState();
             }
         }
 
         async function createAccount() {
-            const username = document.getElementById('newAccUser').value;
-            const password = document.getElementById('newAccPass').value;
+            const username = document.getElementById('newAccUser').value.trim();
+            const password = document.getElementById('newAccPass').value.trim();
             const role = document.getElementById('newAccRole').value;
             const res = await fetch('/api/admin/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, role })
+                body: JSON.stringify({ operatorUsername: currentUser.username, username, password, role })
             });
             if (res.ok) {
-                alert('Cuenta creada');
+                alert('Cuenta creada con éxito.');
             } else {
-                alert('Error al crear cuenta');
+                alert('Error al crear cuenta.');
             }
+        }
+
+        async function uploadEmoji() {
+            const emojiTag = document.getElementById('newEmojiTag').value.trim();
+            const res = await fetch('/api/admin/emojis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emojiTag, operatorUsername: currentUser.username })
+            });
+            if (res.ok) {
+                alert('Emoji mensual añadido al chat.');
+                loadState();
+            }
+        }
+
+        async function submitIdea() {
+            const idea = document.getElementById('ideaInput').value.trim();
+            if (!idea) return;
+            await fetch('/api/ideas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser.username, idea })
+            });
+            alert('¡Idea enviada al buzón!');
+            document.getElementById('ideaInput').value = '';
         }
 
         function collectKey2() {
-            alert('¡Has encontrado la Llave 2 verde!');
+            alert('¡Has encontrado la Llave 2 verde oculta en los perfiles!');
             localStorage.setItem('key2_collected', 'true');
             document.getElementById('greenKey').style.display = 'none';
+            fetch('/api/keys/collect-key2', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser.username })
+            });
         }
 
-        function tryUnlock(lockNum) {
-            if (lockNum === 1) {
-                alert('Cerradura 1: Requiere comprar la Llave 1 en la tienda.');
-            } else if (lockNum === 2) {
-                if (localStorage.getItem('key2_collected') === 'true') {
-                    alert('¡Cerradura 2 abierta con éxito!');
-                    document.getElementById('lock2').style.background = '#4CAF50';
-                } else {
-                    alert('Cerradura 2 bloqueada. Busca la llave verde en perfiles.');
-                }
-            } else if (lockNum === 3) {
-                alert('Cerradura 3 reservada para la versión 2.0.');
+        async function tryUnlock(lockNum) {
+            if (lockNum === 2 && localStorage.getItem('key2_collected') === 'true') {
+                document.getElementById('lockBtn2').style.background = '#4CAF50';
+                alert('¡Cerradura 2 abierta correctamente con la llave verde!');
+                return;
+            }
+            const res = await fetch('/api/jail/unlock', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lockNum, username: currentUser.username })
+            });
+            const data = await res.json();
+            alert(data.message || 'Respuesta de la cerradura.');
+            if (res.ok && lockNum === 1) {
+                document.getElementById('lockBtn1').style.background = '#4CAF50';
             }
         }
+
+        loadState();
     </script>
 </body>
 </html>
