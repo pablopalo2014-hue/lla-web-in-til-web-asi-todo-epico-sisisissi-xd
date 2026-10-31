@@ -5,7 +5,7 @@ const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares
+// Middlewares obligatorios
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,7 +31,7 @@ let db = {
   keys: { key1: false, key2: false, key3: false }
 };
 
-// Anti-sleep ping cada 50 segundos para Render
+// Anti-sleep ping cada 50 segundos para evitar que Render duerma la web
 const RENDER_URL = 'https://la-web-inutil-servidor-supongo.onrender.com';
 setInterval(() => {
   https.get(RENDER_URL, (res) => {
@@ -41,17 +41,26 @@ setInterval(() => {
   });
 }, 50000);
 
-// --- RUTAS DE VISTAS (HTMLs) ---
+// ==========================================
+// 📄 RUTAS DE VISTAS (HTMLs)
+// ==========================================
+
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+    if (err) res.status(500).send('Error al cargar index.html');
+  });
 });
 
 app.get('/code', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'code.html'));
+  res.sendFile(path.join(__dirname, 'public', 'code.html'), (err) => {
+    if (err) res.status(500).send('Error al cargar code.html');
+  });
 });
 
 app.get('/home', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'home.html'));
+  res.sendFile(path.join(__dirname, 'public', 'home.html'), (err) => {
+    if (err) res.status(500).send('Error al cargar home.html');
+  });
 });
 
 app.get('/401', (req, res) => {
@@ -64,14 +73,16 @@ app.get('/401', (req, res) => {
   `);
 });
 
-// --- API ENDPOINTS ---
+// ==========================================
+// 🔌 API ENDPOINTS (RESPONDEN A TODAS LAS PETICIONES)
+// ==========================================
 
-// Obtener estado completo
+// 1. Obtener estado general de la base de datos
 app.get('/api/state', (req, res) => {
   res.json(db);
 });
 
-// Login
+// 2. Login de usuarios
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const user = db.users.find(u => u.username === username && u.password === password);
@@ -82,7 +93,7 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-// Registro de cuenta Owner con código de un solo uso
+// 3. Registro de cuenta Owner con código único (45567)
 app.post('/api/register-owner', (req, res) => {
   const { code, username, password } = req.body;
   if (db.singleUseCode.used || db.singleUseCode.code !== code) {
@@ -105,7 +116,7 @@ app.post('/api/register-owner', (req, res) => {
   res.json({ success: true, user: newUser });
 });
 
-// Chat general con control de restricciones
+// 4. Chat general con restricciones de baneo/bloqueo
 app.post('/api/chat', (req, res) => {
   const { username, text } = req.body;
   const user = db.users.find(u => u.username === username);
@@ -117,7 +128,7 @@ app.post('/api/chat', (req, res) => {
   res.json({ success: true, chat: db.chat });
 });
 
-// Panel del Banquero (Sumar/Restar monedas)
+// 5. Panel del Banquero (Sumar o restar Inútil Coins)
 app.post('/api/banquero/money', (req, res) => {
   const { username, amount } = req.body;
   const user = db.users.find(u => u.username === username);
@@ -129,7 +140,7 @@ app.post('/api/banquero/money', (req, res) => {
   }
 });
 
-// Panel de Admin / Owner: Crear o modificar cuentas
+// 6. Panel de Administración y Owner (Crear / Editar cuentas y restricciones)
 app.post('/api/admin/users', (req, res) => {
   const { username, password, restrictions, role, actionType } = req.body;
   
@@ -163,7 +174,7 @@ app.post('/api/admin/users', (req, res) => {
   res.json({ success: true, user: newUser });
 });
 
-// Subir emojis mensuales
+// 7. Subida de emojis mensuales de administrador
 app.post('/api/admin/emojis', (req, res) => {
   const { emojiTag } = req.body;
   if (emojiTag && !db.adminEmojis.includes(emojiTag)) {
@@ -172,7 +183,7 @@ app.post('/api/admin/emojis', (req, res) => {
   res.json({ success: true, adminEmojis: db.adminEmojis });
 });
 
-// Panel de Vendedor / Admin: Crear ítems en el mercado (Cosméticos, Roles, Extras)
+// 8. Panel de Vendedor / Admin: Crear ítems en el mercado
 app.post('/api/market/item', (req, res) => {
   const item = req.body;
   item.id = db.market.length + 1;
@@ -180,7 +191,7 @@ app.post('/api/market/item', (req, res) => {
   res.json({ success: true, market: db.market });
 });
 
-// Comprar ítems del mercado
+// 9. Comprar ítems del mercado
 app.post('/api/market/buy', (req, res) => {
   const { username, itemId } = req.body;
   const user = db.users.find(u => u.username === username);
@@ -192,7 +203,7 @@ app.post('/api/market/buy', (req, res) => {
   user.coins -= item.price;
   user.inventory.push(item);
 
-  // Detector de Llave 1 en la descripción o endpoint
+  // Activador automático de Llave 1
   if (item.endpoint === 'key1' || (item.desc && item.desc.includes('[item?_key1]'))) {
     db.keys.key1 = true;
   }
@@ -200,26 +211,26 @@ app.post('/api/market/buy', (req, res) => {
   res.json({ success: true, user, market: db.market });
 });
 
-// Crear Eventos
+// 10. Crear Eventos
 app.post('/api/events', (req, res) => {
   db.events.push(req.body);
   res.json({ success: true, events: db.events });
 });
 
-// Crear Misiones
+// 11. Crear Misiones
 app.post('/api/missions', (req, res) => {
   db.missions.push(req.body);
   res.json({ success: true, missions: db.missions });
 });
 
-// Buzón de Ideas
+// 12. Buzón de Ideas
 app.post('/api/ideas', (req, res) => {
   const { username, idea } = req.body;
   db.ideas.push({ username, idea, time: new Date().toLocaleString() });
   res.json({ success: true, ideas: db.ideas });
 });
 
-// Publicaciones en perfiles
+// 13. Publicaciones en perfiles
 app.post('/api/posts', (req, res) => {
   const { username, content } = req.body;
   const user = db.users.find(u => u.username === username);
@@ -231,7 +242,7 @@ app.post('/api/posts', (req, res) => {
   res.json({ success: true, user });
 });
 
-// Comentarios en perfiles
+// 14. Comentarios en perfiles
 app.post('/api/profile/comment', (req, res) => {
   const { profileUser, author, comment } = req.body;
   const user = db.users.find(u => u.username === profileUser);
@@ -241,7 +252,7 @@ app.post('/api/profile/comment', (req, res) => {
   res.json({ success: true, user });
 });
 
-// Actualizar perfil (foto de perfil)
+// 15. Actualizar perfil (foto de perfil)
 app.post('/api/profile/update', (req, res) => {
   const { username, pfp } = req.body;
   const user = db.users.find(u => u.username === username);
@@ -250,7 +261,7 @@ app.post('/api/profile/update', (req, res) => {
   res.json({ success: true, user });
 });
 
-// Desbloquear Cárcel de Mario
+// 16. Desbloquear Cárcel de Mario
 app.post('/api/jail/unlock', (req, res) => {
   const { lockNum } = req.body;
 
@@ -270,6 +281,7 @@ app.post('/api/jail/unlock', (req, res) => {
   res.status(400).json({ success: false, message: 'Cerradura inválida.' });
 });
 
+// Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor completo de La Web Inútil iniciado en el puerto ${PORT}`);
+  console.log(`Servidor de La Web Inútil funcionando en el puerto ${PORT}`);
 });
