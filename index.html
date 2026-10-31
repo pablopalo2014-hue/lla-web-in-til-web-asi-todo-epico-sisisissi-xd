@@ -1,31 +1,56 @@
-<div class="easter-egg" onclick="claimEasterEgg()">🪙 Inútil Coins gratis...</div>
-
-<script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('currentUser', JSON.stringify(data.user));
-                window.location.href = '/home';
-            } else {
-                window.location.href = '/401';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>La Web Inútil - Login</title>
+    <style>
+        body { background: #121212; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); width: 320px; text-align: center; border: 1px solid #333; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 6px; background: #2a2a2a; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #ffcc00; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #e6b800; }
+        .easter-egg { position: fixed; bottom: 15px; left: 15px; font-size: 13px; color: #555; cursor: pointer; user-select: none; }
+        .easter-egg:hover { color: #ffcc00; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>🔒 La Web Inútil</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Nombre de usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Acceder</button>
+        </form>
+        <p style="margin-top: 15px;">
+            <a href="/code" style="color: #aaa; font-size: 13px; text-decoration: none;">Entrar con código de un solo uso</a>
+        </p>
+    </div>
+    <div class="easter-egg" onclick="getFreeCoins()">🎁 [Easter Egg]</div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    window.location.href = '/home';
+                } else {
+                    window.location.href = '/401';
+                }
+            } catch (err) {
+                alert('Error de conexión con el servidor.');
             }
-        } catch (err) {
-            window.location.href = '/401';
+        });
+        function getFreeCoins() {
+            alert('¡Has encontrado el Easter Egg! Has ganado tus primeras Inútil Coins 🪙');
         }
-    });
-
-    function claimEasterEgg() {
-        alert('¡Felicidades! Has descubierto el Easter Egg y conseguido 50 Inútil Coins gratis 🪙');
-    }
-</script>
+    </script>
+</body>
+</html>
