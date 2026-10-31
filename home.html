@@ -1,0 +1,249 @@
+    header { background: #1e1e1e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .logo { font-size: 20px; font-weight: bold; color: #ffcc00; }
+    .coins-display { background: #2a2a2a; padding: 8px 16px; border-radius: 20px; font-weight: bold; color: #ffcc00; border: 1px solid #444; }
+
+    nav { background: #181818; display: flex; border-bottom: 1px solid #333; overflow-x: auto; }
+    nav button { background: none; border: none; color: #aaa; padding: 14px 20px; cursor: pointer; font-weight: bold; font-size: 14px; white-space: nowrap; }
+    nav button.active { color: #ffcc00; border-bottom: 2px solid #ffcc00; background: #222; }
+    nav button:hover { color: #fff; }
+
+    main { flex: 1; padding: 20px; overflow-y: auto; background: #141414; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Estilos Chat */
+    .chat-box { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; height: 350px; overflow-y: auto; padding: 15px; margin-bottom: 10px; }
+    .chat-msg { margin-bottom: 10px; background: #2a2a2a; padding: 8px 12px; border-radius: 6px; }
+    .chat-msg .user { font-weight: bold; color: #ffcc00; font-size: 13px; }
+    .chat-controls { display: flex; gap: 10px; }
+    .chat-controls input { flex: 1; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 6px; }
+    .chat-controls button { padding: 10px 20px; background: #ffcc00; border: none; font-weight: bold; cursor: pointer; border-radius: 6px; }
+    .emoji-picker { margin-top: 10px; background: #222; padding: 10px; border-radius: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .emoji-btn { background: #333; border: none; color: #fff; font-size: 18px; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+
+    /* Mercado & Sub-pestanas */
+    .sub-nav { display: flex; gap: 10px; margin-bottom: 15px; }
+    .sub-nav button { background: #2a2a2a; border: 1px solid #444; color: #ccc; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .sub-nav button.active { background: #ffcc00; color: #000; font-weight: bold; }
+    .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+    .market-item { background: #1e1e1e; border: 1px solid #333; padding: 15px; border-radius: 8px; text-align: center; }
+
+    /* Cárcel de Mario */
+    .mario-jail { background: #1e1e1e; border: 2px solid #ff4444; border-radius: 10px; padding: 20px; text-align: center; margin-top: 25px; position: relative; }
+    .mario-eyes { font-size: 30px; letter-spacing: 5px; }
+    .speech-bubble { background: #fff; color: #000; padding: 6px 12px; border-radius: 12px; display: inline-block; font-weight: bold; margin-bottom: 10px; font-size: 13px; }
+    .locks-container { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+    .lock-btn { background: #333; border: 1px solid #555; color: #fff; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+
+    /* Perfil */
+    .profile-card { background: #1e1e1e; padding: 20px; border-radius: 8px; position: relative; }
+    .hidden-key-2 { position: absolute; top: 10px; right: 10px; width: 12px; height: 12px; background: #22c55e; border-radius: 50%; cursor: pointer; }
+    .badge-admin { display: inline-block; background: #ef4444; color: #fff; font-weight: bold; padding: 2px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+
+    /* Formularios Paneles */
+    .panel-box { background: #1e1e1e; padding: 15px; border-radius: 8px; border: 1px solid #333; margin-bottom: 15px; }
+    .panel-box input, .panel-box select, .panel-box textarea { width: 100%; padding: 8px; margin: 6px 0; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; }
+    .panel-box button { background: #ffcc00; border: none; padding: 8px 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 6px; }
+</style>
+
+
+<header>
+    <div class="logo">⚡ La Web Inútil</div>
+    <div class="coins-display"><span id="userCoins">0</span> 🪙</div>
+</header>
+
+<nav>
+    <button class="nav-btn active" onclick="switchTab('chat')">💬 Chat</button>
+    <button class="nav-btn" onclick="switchTab('market')">🛒 Mercado</button>
+    <button class="nav-btn" onclick="switchTab('profiles')">👤 Perfiles</button>
+    <button class="nav-btn" onclick="switchTab('inventory')">🎒 Inventario</button>
+    <button class="nav-btn" onclick="switchTab('missions')">🎯 Misiones</button>
+    <button class="nav-btn" id="btnBanquero" onclick="switchTab('banquero')" style="display:none;">💰 Banquero</button>
+    <button class="nav-btn" id="btnVendedor" onclick="switchTab('vendedor')" style="display:none;">🏷️ Vendedor</button>
+    <button class="nav-btn" id="btnAdmin" onclick="switchTab('admin')" style="display:none;">🛡️ Admin</button>
+    <button class="nav-btn" id="btnOwner" onclick="switchTab('owner')" style="display:none;">👑 Owner</button>
+</nav>
+
+<main>
+    <!-- SECCIÓN CHAT -->
+    <div id="tab-chat" class="tab-content active">
+        <h3>Chat Privado del Patio</h3>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="chat-controls">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+        <div class="emoji-picker" id="emojiPicker"></div>
+    </div>
+
+    <!-- SECCIÓN MERCADO -->
+    <div id="tab-market" class="tab-content">
+        <div class="sub-nav">
+            <button class="sub-btn active" onclick="switchMarketSub('cosmetics')">Cosméticos</button>
+            <button class="sub-btn" onclick="switchMarketSub('roles')">Roles del Bicho</button>
+            <button class="sub-btn" onclick="switchMarketSub('extras')">Extras</button>
+            <button class="sub-btn" id="btnEventSub" onclick="switchMarketSub('events')" style="display:none;">🔥 Evento</button>
+        </div>
+
+        <div id="market-list" class="market-grid"></div>
+
+        <!-- Cárcel de Mario -->
+        <div class="mario-jail">
+            <div class="speech-bubble">liberame pls</div><br>
+            <div class="mario-eyes">👀</div>
+            <h4>🔒 Cárcel de Mario</h4>
+            <div class="locks-container">
+                <button class="lock-btn" onclick="useKey(1)">🔒 Cerradura 1</button>
+                <button class="lock-btn" onclick="useKey(2)">🔒 Cerradura 2</button>
+                <button class="lock-btn" onclick="useKey(3)">🔒 Cerradura 3</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN PERFILES -->
+    <div id="tab-profiles" class="tab-content">
+        <div id="myProfileBox" class="profile-card">
+            <div class="hidden-key-2" onclick="collectKey2()" title="???"></div>
+            <h3>Mi Perfil <span id="adminBadge" class="badge-admin" style="display:none;" onclick="alert('Administrador de la web')">A</span></h3>
+            <p>Usuario: <span id="profUser"></span></p>
+            <p>Rol: <span id="profRole"></span></p>
+            <button onclick="requestChange()">Solicitar cambio de nombre/clave a Admins</button>
+        </div>
+        <h4>Todos los Usuarios</h4>
+        <input type="text" placeholder="Buscar gente..." style="width:100%; padding:8px; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+        <div id="usersList"></div>
+    </div>
+
+    <!-- SECCIÓN INVENTARIO -->
+    <div id="tab-inventory" class="tab-content">
+        <h3>Mi Inventario</h3>
+        <div id="inventoryList" class="market-grid"></div>
+    </div>
+
+    <!-- SECCIÓN MISIONES -->
+    <div id="tab-missions" class="tab-content">
+        <h3>Misiones Semanales y de Evento</h3>
+        <div id="missionsList"></div>
+    </div>
+
+    <!-- PANEL BANQUERO -->
+    <div id="tab-banquero" class="tab-content">
+        <h3>Panel del Banquero</h3>
+        <div class="panel-box">
+            <h4>Sumar / Restar InútilCoins</h4>
+            <input type="text" id="bqUser" placeholder="Usuario">
+            <input type="number" id="bqAmount" placeholder="Cantidad (ej: 50 o -20)">
+            <button onclick="modifyMoney()">Aplicar Monedas</button>
+        </div>
+    </div>
+
+    <!-- PANEL VENDEDOR -->
+    <div id="tab-vendedor" class="tab-content">
+        <h3>Panel del Vendedor</h3>
+        <div class="panel-box">
+            <h4>Subir Cosmético / Extra</h4>
+            <select id="vType">
+                <option value="cosmetics">Cosmético</option>
+                <option value="extras">Extra</option>
+            </select>
+            <input type="text" id="vName" placeholder="Nombre del ítem">
+            <input type="text" id="vDesc" placeholder="Descripción (usa [item?_key1] si es llave)">
+            <input type="number" id="vPrice" placeholder="Precio (0 a 9 billones)">
+            <button onclick="addItem()">Publicar Ítem</button>
+        </div>
+    </div>
+
+    <!-- PANEL ADMIN -->
+    <div id="tab-admin" class="tab-content">
+        <h3>Panel de Administración</h3>
+        <div class="panel-box">
+            <h4>Crear Nueva Cuenta</h4>
+            <input type="text" id="admUser" placeholder="Usuario">
+            <input type="password" id="admPass" placeholder="Contraseña">
+            <button onclick="createAccount()">Crear Usuario</button>
+        </div>
+        <div class="panel-box">
+            <h4>Subir Emoji Especial</h4>
+            <input type="text" id="emojiCode" placeholder="Código (ej: :patio:)">
+            <button onclick="addAdminEmoji()">Añadir Emoji</button>
+        </div>
+    </div>
+
+    <!-- PANEL OWNER -->
+    <div id="tab-owner" class="tab-content">
+        <h3>Panel Exclusivo del Owner</h3>
+        <div class="panel-box">
+            <h4>Asignar Roles Especiales</h4>
+            <input type="text" id="owUser" placeholder="Usuario">
+            <select id="owRole">
+                <option value="banquero">Banquero</option>
+                <option value="vendedor">Vendedor</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button onclick="assignRole()">Asignar Rol</button>
+        </div>
+    </div>
+</main>
+
+<script>
+    let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!currentUser.username) { window.location.href = '/'; }
+
+    // Inicialización
+    document.getElementById('profUser').innerText = currentUser.username;
+    document.getElementById('profRole').innerText = currentUser.role || 'Miembro';
+    document.getElementById('userCoins').innerText = currentUser.coins || 0;
+
+    if (['owner', 'admin'].includes(currentUser.role)) {
+        document.getElementById('adminBadge').style.display = 'inline-block';
+        document.getElementById('btnAdmin').style.display = 'block';
+    }
+    if (currentUser.role === 'owner') { document.getElementById('btnOwner').style.display = 'block'; }
+    if (currentUser.role === 'banquero' || currentUser.role === 'owner') { document.getElementById('btnBanquero').style.display = 'block'; }
+    if (currentUser.role === 'vendedor' || currentUser.role === 'admin' || currentUser.role === 'owner') { document.getElementById('btnVendedor').style.display = 'block'; }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function switchMarketSub(subId) {
+        document.querySelectorAll('.sub-btn').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+        loadMarketItems(subId);
+    }
+
+    function loadMarketItems(type) {
+        const list = document.getElementById('market-list');
+        list.innerHTML = '<p style="color:#aaa;">Todavía no hay nada de nada en esta sección.</p>';
+    }
+
+    function collectKey2() {
+        alert('🔑 ¡Has encontrado la Llave 2 oculta en el perfil!');
+    }
+
+    function useKey(keyNum) {
+        if (keyNum === 3) {
+            alert('La llave 3 no está disponible todavía (Espérala en la v2.0).');
+        } else {
+            alert(`Intentando usar la Llave ${keyNum}...`);
+        }
+    }
+
+    function requestChange() {
+        alert('Solicitud enviada a los administradores.');
+    }
+
+    // Carga inicial del Chat & Emojis
+    const emojis = ['😀', '😂', '🔥', '💀', '👍', ':bicho:'];
+    const picker = document.getElementById('emojiPicker');
+    emojis.forEach(e => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-btn';
+        btn.innerText = e;
+        btn.onclick = () => document.getElementById('chatInput').value += ' ' + e;
+        picker.appendChild(btn);
+    });
+</script>
