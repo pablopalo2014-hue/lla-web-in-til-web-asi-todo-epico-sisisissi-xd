@@ -1,0 +1,31 @@
+<div class="easter-egg" onclick="claimEasterEgg()">🪙 Inútil Coins gratis...</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+                window.location.href = '/home';
+            } else {
+                window.location.href = '/401';
+            }
+        } catch (err) {
+            window.location.href = '/401';
+        }
+    });
+
+    function claimEasterEgg() {
+        alert('¡Felicidades! Has descubierto el Easter Egg y conseguido 50 Inútil Coins gratis 🪙');
+    }
+</script>
