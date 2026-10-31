@@ -1,7 +1,7 @@
 {
   "name": "la-web-inutil",
   "version": "1.0.0",
-  "description": "Servidor para La Web Inútil del grupo del colegio",
+  "description": "La Web Inutil",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
